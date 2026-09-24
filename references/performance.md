@@ -3,6 +3,7 @@
 > Actionable performance guidance distilled from *Systems Performance* (Gregg) and *High Performance MySQL* (Schwartz et al.) into original decision rules — no book excerpts. Confirm claims against your product version and workload before acting.
 
 ## Workload models
+**Sources:** [systems-performance] [use-method]
 
 - Describe load before tuning: request rate, in-flight concurrency, payload size, read/write mix, data volume, hot-set size, arrival pattern (steady, bursty, periodic), and think time. A tuning result is only valid for the workload it was measured under.
 - Four workload pillars: demand, access pattern, locality (hot data), and skew (few keys dominate). Averages hide all four — always measure distributions.
@@ -11,6 +12,7 @@
 - Separate on-CPU from off-CPU time (I/O, locks, network, scheduler waits). A "slow query" may be waiting, not computing — profile both before choosing a fix.
 
 ## Percentiles and latency
+**Sources:** [systems-performance]
 
 - Track p50/p90/p95/p99 (plus p999 on critical paths) per tier; state SLAs as percentiles ("p99 < 200 ms"), never as averages.
 - Fan-out multiplies tails: a request awaiting N parallel dependencies experiences roughly the max, not the mean, of their latencies — budget per-leg percentiles so the aggregate meets the SLA.
@@ -19,6 +21,7 @@
 - Tail causes to hunt: slowest replica/shard, unbalanced keys, garbage collection, connection churn, network retries. The tail is often dominated by one mechanism, but may have several — measure and attribute before fixing.
 
 ## Benchmarks
+**Sources:** [systems-performance]
 
 - Benchmark your workload, not the tool: real queries/endpoints, real data shape and volume, realistic concurrency. Microbenchmarks isolate one mechanism only — label them as such.
 - Control the environment: dedicated machines, same CPU governor, no noisy neighbors, fixed dataset, warmed caches, defined steady-state window (ignore warm-up and run tail).
@@ -28,6 +31,7 @@
 - Benchmark only what the change touches, then re-run the full suite: partial evidence beats none, full evidence beats partial.
 
 ## Capacity
+**Sources:** [systems-performance]
 
 - Model demand = current peak × growth × peak factor; plan for the peak percentile, not the mean. Write down assumptions (growth rate, retention, hot-set growth) so the model is auditable.
 - Size for the failures you accept: if you run N replicas with a defined failover window, losing one must still meet SLA within that window — N+1 is a common starting shape, not a universal requirement. Set utilization ceilings where queues start growing (measured saturation), not at a fixed percentage; keep memory below swap.
@@ -35,6 +39,7 @@
 - Capacity is a hypothesis: verify with load tests at planned scale and re-review against measured peak on a cadence that matches your growth rate (quarterly for fast-growing services, less often for stable ones), and after any topology or workload change.
 
 ## Caching
+**Sources:** [systems-performance] [hp-mysql]
 
 - Cache derived/expensive data, never the source of truth: one authoritative copy plus explicit invalidation and rebuild paths.
 - Measure hit rate AND its latency effect; monitor eviction rate and staleness. A 99% hit rate on a cold path can matter less than 80% on the hot path.
@@ -43,6 +48,7 @@
 - Layer caches by cost and volatility (per-request → process → shared); each layer needs its own hit-rate and staleness budget.
 
 ## Database diagnosis (MySQL)
+**Sources:** [hp-mysql] [mysql-manual]
 
 - Funnel order: metrics → slow query log → EXPLAIN of the worst queries → schema/index fix → re-measure with the identical benchmark.
 - Read EXPLAIN for access type, index use, row estimates: hunt full scans, filesort/temp tables, and "Using index" (covering) queries. Test on real data — estimates lie on tiny tables.
@@ -52,12 +58,14 @@
 - Version behavior differs: MySQL 8.0 removed the query cache and changed defaults; 5.7 vs 8.0 optimizer and EXPLAIN differ. Test on the version you actually run.
 
 ## Metrics to collect
+**Sources:** [systems-performance] [mysql-manual]
 
 - RED per service: Rate, Errors, Duration (percentiles); USE per resource: utilization, saturation, errors.
 - DB: slow-query count, buffer-pool hit ratio, lock waits, replication lag, connection utilization.
 - Cache: hit rate, eviction rate, staleness/age, stampede events.
 
 ## Tuning workflow
+**Sources:** (synthesis)
 
 - State the goal and SLA in percentile terms before touching anything; a session without a target metric is unverifiable.
 - Find the bottleneck first (saturation), then the dominant cost of the hot path; fix the biggest measured cost, re-measure, repeat.
@@ -65,12 +73,17 @@
 - Keep a run log: date, versions, environment, workload, results. The log is what makes tuning reproducible.
 
 ## Verification
+**Sources:** (synthesis)
 
 - When performance is a claim or risk, every change ships with a before/after measurement from the relevant benchmark, including error rates; not faster = not verified. Skip the ritual where performance is not at stake.
 - After deploy, watch latency percentiles, saturation, error rate, cache hit rate, and slow-query count across a representative window — a full peak cycle when one exists, otherwise a bounded observation matched to traffic patterns.
 
 ## Sources
 
-- B. Gregg, *Systems Performance*, 2nd ed. (2020); the USE method at brendangregg.com.
-- B. Schwartz et al., *High Performance MySQL* (O'Reilly).
-- MySQL 8.0 reference manual: performance_schema, sys schema, EXPLAIN/optimizer.
+- [systems-performance] B. Gregg, *Systems Performance*, 2nd ed. (2020) (book; no open edition).
+- [use-method] B. Gregg — the USE method: https://www.brendangregg.com/usemethod.html
+- [linuxperf] B. Gregg — Linux performance observability tooling: https://www.brendangregg.com/linuxperf.html
+- [hp-mysql] B. Schwartz et al., *High Performance MySQL* (O'Reilly) (book; no open edition).
+- [mysql-manual] MySQL reference manual — performance_schema, sys schema, EXPLAIN/optimizer: https://dev.mysql.com/doc/refman/8.4/en/performance-schema.html
+
+Slug definitions, verification status, and per-section mapping: `references/source-map.md`.

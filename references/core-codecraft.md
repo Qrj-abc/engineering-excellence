@@ -5,6 +5,7 @@ Scope: module- and function-level writing, review, refactoring, and legacy modif
 ## Decision Rules
 
 ### Design interfaces and modules (APoSD)
+**Sources:** [aposd]
 - Prefer deep modules: small interface, significant hidden complexity. Reject pass-through wrappers that add a name without removing caller work.
 - Pull complexity downward: the module does the hard work so callers stay simple.
 - Hide information: internal representation, storage shape, protocols, and volatile decisions stay inside the boundary.
@@ -17,6 +18,7 @@ Scope: module- and function-level writing, review, refactoring, and legacy modif
 - When one change spreads across many files, suspect missing information hiding; when one file changes for many reasons, split it.
 
 ### Write functions (Clean Code + Code Complete)
+**Sources:** [clean-code] [code-complete]
 - One term per concept; names reveal intent; rename when vocabulary misleads.
 - Small functions at one abstraction level; the happy path reads top-down like a story.
 - Few meaningful parameters: no boolean flags, output parameters, or grab-bag arguments.
@@ -30,6 +32,7 @@ Scope: module- and function-level writing, review, refactoring, and legacy modif
 - Isolate error handling and edge cases so the happy path stays uncluttered.
 
 ### Stay pragmatic (Pragmatic Programmer)
+**Sources:** [pragprog]
 - Keep one authoritative representation per system fact (DRY); keep unrelated concerns orthogonal.
 - Keep volatile decisions reversible until evidence justifies commitment.
 - Automate repetitive, error-prone work; shorten feedback loops with cheap early signals.
@@ -41,6 +44,7 @@ Scope: module- and function-level writing, review, refactoring, and legacy modif
 - Break work into small deliverable increments with honest uncertainty and visible risk.
 
 ### Refactor safely (Fowler / Refactoring.Guru)
+**Sources:** [refactoring] [refactoring-guru]
 - Refactoring preserves observable behavior; keep behavior changes and structural refactoring in separate, individually verifiable steps — each step builds and passes checks, and they need not be separate tasks or commits.
 - Work in small, reversible, buildable, testable, reviewable steps.
 - Establish a safety net first; characterize behavior you do not fully understand before changing it.
@@ -51,6 +55,7 @@ Scope: module- and function-level writing, review, refactoring, and legacy modif
 - Prefer the smallest suitable treatment before riskier structure; mechanical pattern application is itself a smell.
 
 ### Change legacy code (Feathers)
+**Sources:** [welc]
 - Untested code is legacy; do not start with a rewrite.
 - State the behavior change and the behavior that must remain before touching code.
 - Legacy loop: find change point → check existing protection → characterize → find a seam → break the blocking dependency → change → refactor locally.
@@ -60,12 +65,14 @@ Scope: module- and function-level writing, review, refactoring, and legacy modif
 - Reject changes that expand hidden dependencies or mock around untestable structure without improving it.
 
 ### Review any change
+**Sources:** (synthesis)
 - Read the diff as a stranger: can you explain every hunk without the author?
 - One fact, one owner: no duplicate or contradictory knowledge introduced.
 - The change is small enough to verify and would survive a careful review.
 - Names, comments, tests, and the commit tell a coherent story.
 
 ## Applicability Guardrails
+**Sources:** (synthesis)
 - Deep-module and information-hiding advice targets stable, reused boundaries; over-engineering one-off glue is waste.
 - Strict command/query separation and zero-flags are guidelines: private helpers may relax them when the public surface stays clean.
 - Full refactoring ceremony is disproportionate for throwaway or prototype code — label it as such explicitly.
@@ -74,6 +81,7 @@ Scope: module- and function-level writing, review, refactoring, and legacy modif
 - Conventions beat personal taste: codebase-level consistency outranks an individual's preferred style.
 
 ## Common Tensions
+**Sources:** (synthesis)
 - Information hiding vs. debuggability — document hidden decisions and expose diagnostics instead of exposing internals.
 - DRY vs. premature abstraction — duplication is cheaper than a wrong abstraction; the Rule of Three arbitrates.
 - Deep modules vs. framework idioms — frameworks force shallow shapes; wrap them at the boundary, do not fight inside.
@@ -81,8 +89,21 @@ Scope: module- and function-level writing, review, refactoring, and legacy modif
 - Purity of style vs. delivery pressure — the pragmatic test: does the rule reduce real cognitive load or just ceremony?
 
 ## Verification
+**Sources:** (synthesis)
 - Interface: a caller can use the module without knowing internals; interface shrank while capabilities stayed.
 - Function: read it top-down; happy path clear, mutation explicit, no narrating comments, error paths isolated.
 - Refactor: behavior preserved under the relevant tests; the named smell is materially reduced.
 - Legacy: smallest seam used; hidden dependencies did not grow; the touched area is more testable than before.
 - Universal: one fact has one owner; touched code is left better or visibly contained.
+
+## Sources
+
+- [aposd] J. Ousterhout, *A Philosophy of Software Design* — https://web.stanford.edu/~ouster/cgi-bin/aposd.php
+- [clean-code] R. Martin, *Clean Code* (book; no open edition)
+- [code-complete] S. McConnell, *Code Complete*, 2nd ed. (book; no open edition)
+- [refactoring] M. Fowler, *Refactoring*, 2nd ed. — https://martinfowler.com/books/refactoring.html
+- [refactoring-guru] Refactoring.Guru — https://refactoring.guru/refactoring
+- [pragprog] A. Hunt & D. Thomas, *The Pragmatic Programmer*, 20th Anniversary ed. (book; no open edition)
+- [welc] M. Feathers, *Working Effectively with Legacy Code* (book); companion practice — https://understandlegacycode.com/
+
+Slug definitions, verification status, and per-section mapping: `references/source-map.md`.

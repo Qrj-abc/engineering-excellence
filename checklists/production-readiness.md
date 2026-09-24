@@ -2,6 +2,8 @@
 
 Go-live gate for shipping a change, feature, or service to production users — and the re-entry gate after an incident (see checklists/incident-review.md). Run by the release owner with the author, reviewed by an independent approver.
 
+**Sources:** transitive — items derive from `references/delivery.md`, `references/observability-sre.md`, `references/security.md`, and `references/incident-chaos.md`; resolve the chain through `references/source-map.md`. No primary source is cited directly — do not attribute a checklist item to OWASP, NIST, or a book.
+
 ## Applicability
 
 Run before any of: first production deployment, feature-flag flip to real users, new external dependency, new data store or schema migration, post-incident re-entry. Tier by blast radius and reversibility — the skill's T1–T4 scale:

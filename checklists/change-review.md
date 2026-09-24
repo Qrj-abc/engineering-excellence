@@ -2,6 +2,8 @@
 
 Pre-approval review of a code change before integration. Run by the author before declaring the change complete, re-verified by a reviewer; the review produces evidence and a pass/block recommendation — integration or merge remains the user's or team's decision. Applies to source, configuration, migrations, pipeline definitions, and documentation changes.
 
+**Sources:** transitive — items derive from `references/delivery.md` and `references/team-process.md`; resolve the chain through `references/source-map.md`. No primary source is cited directly — do not attribute a checklist item to OWASP, NIST, or a book.
+
 ## Applicability
 
 Tier by blast radius and reversibility, not by confidence — the skill's T1–T4 scale:

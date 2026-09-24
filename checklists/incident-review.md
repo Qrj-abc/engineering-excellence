@@ -2,6 +2,8 @@
 
 Post-incident review: reconstruct what happened, bound the damage, identify causal and contributing factors, and close the gaps that let it happen. Blameless by construction — the review targets systems, processes, and action items, never individuals. Follows references/incident-chaos.md.
 
+**Sources:** transitive — items derive from `references/incident-chaos.md`; resolve the chain through `references/source-map.md`. No primary source is cited directly — do not attribute a checklist item to Google SRE or a book.
+
 ## Applicability
 
 Run after any production incident (user-facing outage, data loss, security event, SLO breach). Tier by impact, never by cause — the skill's T1–T4 scale:

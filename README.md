@@ -146,6 +146,19 @@ T2+ 的任务，只有在以下证据齐备时才算完成：
 - **性能**：*Systems Performance*、*High Performance MySQL*
 - **团队**：*Team Topologies*、ADR 实践、Fowler 技术债模型
 
+### 细粒度溯源
+
+上述书目只是「文件级」来源。自 2026-09-24 起，`references/` 下每个功能小节都在标题下直接挂 `**Sources:**` 标签，指向 `references/source-map.md` 里的 slug 登记表：
+
+- 每个 slug 给出完整出处、URL 与**链接探活状态**（✅ 可达 / ⚠️ 本机网络不可达 / 🔒 反爬 403 / 📕 纸质书或付费标准）。
+- 标注 `(synthesis)` 的小节是作者原创综合（冲突仲裁、护栏、张力清单、验证标准），**不对应任何单一来源**——`SKILL.md` 的风险分级 T1–T4、冲突优先序、九步工作流同样属于此类。
+- 修正了 2 条失效链接：OWASP ASVS 与 NIST SSDF SP 800-218 的旧地址均返回 404，已替换为现行地址。
+- 新增 AI 时代资源：OWASP Top 10 for LLM Applications、OWASP GenAI Security Project、NIST AI RMF、EU AI Act、NIST Privacy Framework、Sigstore、SLSA v1.1、OpenTelemetry Semantic Conventions。
+
+覆盖情况：11 个 references 共 **109 个叶子小节，100% 挂标签**（67 个 slug 全部有定义）；4 个 checklist 标注为「传递来源」并指明所依赖的 references；`SKILL.md` 属原创编排，无来源标注。粒度矩阵见 `references/source-map.md` 的 Coverage at a glance。
+
+溯源纪律：标签是**指针而非引文**。技能里的规则全部是重写的决策规则，不是原文摘录；把它当引用去写审计材料前，请先回原文核对。
+
 ---
 
 ## ⚠️ 非目标（Non-Goals）

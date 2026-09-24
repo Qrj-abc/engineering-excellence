@@ -5,6 +5,7 @@ Scope: structuring systems, defining module and service boundaries, modeling bus
 ## Decision Rules
 
 ### Set dependency direction (Clean Architecture)
+**Sources:** [clean-arch] [adr]
 - Source dependencies point inward: domain and use cases never import frameworks, databases, UI, queues, or vendor clients.
 - Entities guard enterprise invariants; use cases orchestrate one application action with plain I/O models.
 - Controllers, presenters, gateways, and handlers translate; they own no business logic.
@@ -18,6 +19,7 @@ Scope: structuring systems, defining module and service boundaries, modeling bus
 - Boundaries must be enforced in code, tests, packages, or build rules — an unenforced boundary is a suggestion.
 
 ### Model the domain (DDD)
+**Sources:** [ddd] [ddd-ref] [bounded-context]
 - One Ubiquitous Language per Bounded Context: code, tests, docs, and conversation say the same thing.
 - The same word in different contexts is likely a different concept; name contexts explicitly.
 - Concentrate modeling effort on the Core Domain; keep supporting and generic subdomains deliberately simpler.
@@ -31,6 +33,7 @@ Scope: structuring systems, defining module and service boundaries, modeling bus
 - Apply full tactical DDD only where invariants, lifecycle, language, or integration risk justify it; CRUD stays simple.
 
 ### Apply enterprise patterns (PoEAA)
+**Sources:** [poeaa]
 - Separate presentation, workflow, domain logic, data source, transactions, concurrency, and integration.
 - Choose the business-logic pattern by force: Transaction Script (simple flows), Table Module (set logic), Domain Model (rich rules and lifecycle).
 - Use a Service Layer for application operations, transaction boundaries, and orchestration.
@@ -42,6 +45,7 @@ Scope: structuring systems, defining module and service boundaries, modeling bus
 - Transaction ownership is explicit, short, and kept out of hidden helpers and remote-call spans.
 
 ### Public contracts and evolution
+**Sources:** (synthesis)
 - Keep a compatibility matrix for each public contract — existing vs. new clients — and update it on every change; a contract is binding once published, even with no known consumers yet.
 - Prefer additive changes first: new fields, endpoints, or events that old clients can ignore; break compatibility only when carrying the old shape costs more than the migration.
 - Set an explicit version and deprecation policy: announce, keep old versions alive for an agreed window, route deprecated calls to observability, and remove only after migration evidence.
@@ -51,6 +55,7 @@ Scope: structuring systems, defining module and service boundaries, modeling bus
 - Make migration and rollback explicit for schema and contract changes: forward-compatible writes, reversible steps, and a defined rollback that restores the previous contract.
 
 ## Applicability Guardrails
+**Sources:** (synthesis)
 - Clean Architecture pays off when policy must outlive frameworks and vendors; a small CRUD app does not need five layers.
 - DDD is for business complexity, not technical problems; forcing aggregates onto CRUD adds ceremony without protection.
 - Prefer a monolith first; distributed boundaries are cost, not virtue — extract services at a real seam.
@@ -61,6 +66,7 @@ Scope: structuring systems, defining module and service boundaries, modeling bus
 - Document architectural debt when it cannot be fixed safely now.
 
 ## Common Tensions
+**Sources:** (synthesis)
 - Purity of boundaries vs. delivery speed — start lean, add boundaries when change frequency justifies them.
 - Model richness vs. simplicity — model only what the business language needs; YAGNI applies to models too.
 - Aggregate consistency vs. throughput — one transaction per aggregate fights high-write paths; split aggregates only when invariants allow.
@@ -71,6 +77,7 @@ Scope: structuring systems, defining module and service boundaries, modeling bus
 - Layered vs. hexagonal style — layers leak upward when controllers touch repositories directly; enforce with package boundaries or lint rules.
 
 ## Verification
+**Sources:** (synthesis)
 - Dependency check: draw the import graph — does anything in the core reference an outer layer?
 - Core tests run without a real framework, database, or network: proof of independence.
 - Context map exists; each cross-context integration names its relationship, translation strategy, and boundary test.
@@ -78,3 +85,15 @@ Scope: structuring systems, defining module and service boundaries, modeling bus
 - For each pattern in use, name the force it answers; if you cannot, reconsider it.
 - A business-rule change touches the domain layer only — controllers, persistence, and delivery stay untouched.
 - Tests read like executable examples of the model; invariant violations surface in fast unit tests.
+
+## Sources
+
+- [clean-arch] R. Martin, *Clean Architecture* (book; no open edition)
+- [ddd] E. Evans, *Domain-Driven Design* — https://www.domainlanguage.com/ddd/
+- [ddd-ref] V. Vernon, *Implementing Domain-Driven Design* / *DDD Distilled* (books; no open edition)
+- [poeaa] M. Fowler, *Patterns of Enterprise Application Architecture* — https://martinfowler.com/eaaCatalog/
+- [bounded-context] M. Fowler, "BoundedContext" — https://martinfowler.com/bliki/BoundedContext.html
+- [adr] Architecture Decision Records — https://adr.github.io/
+- [c4model] C4 model (context/container/component diagrams) — https://c4model.com/ (supplementary; not the source of any rule here)
+
+Slug definitions, verification status, and per-section mapping: `references/source-map.md`.

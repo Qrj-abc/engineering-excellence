@@ -91,6 +91,11 @@ Load only the rows that match the task — 1–3 by default, more only when scop
 | Incidents, outage response, chaos engineering, resilience | `references/incident-chaos.md` | `checklists/incident-review.md` |
 | Compliance, regulation, audit, data retention, records | `references/compliance-audit.md` | `checklists/security-review.md` |
 
+Provenance: every functional section in a reference carries a `**Sources:**` tag.
+`references/source-map.md` resolves those tags to full citations, records link verification
+status, and marks sections that are original synthesis `(synthesis)` rather than distilled
+material. Read it when you must justify a rule, cite it, or check whether a link is still live.
+
 Checklists by gate:
 - `checklists/change-review.md` — before declaring any T2+ change complete.
 - `checklists/production-readiness.md` — before release of T3/T4.
@@ -126,4 +131,4 @@ If evidence cannot be produced (no harness, no environment), state it explicitly
 - Not a substitute for a security or compliance officer — T4 security/compliance findings escalate to humans.
 - Not an excuse to over-engineer — the minimum rule set that protects the risk always wins.
 
-*The source books, standards, and authoritative references are distilled into the `references/` files; this SKILL.md only routes and enforces discipline.*
+*The source books, standards, and authoritative references are distilled into the `references/` files; this SKILL.md only routes and enforces discipline. Per-section provenance and link verification live in `references/source-map.md`. Rules marked `(synthesis)` — including this file's risk tiers and conflict order — are this skill's own design, not findings from those sources.*

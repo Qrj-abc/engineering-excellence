@@ -5,6 +5,7 @@ Scope: designing data models, storage, replication, partitioning, streams, or an
 ## Decision Rules
 
 ### Set ground truths
+**Sources:** [ddia]
 - Do not design as if every write, read, replica, and queue were local, ordered, fresh, and exactly-once.
 - Treat crashes, partial writes, duplicates, timeouts, stale reads, and unknown downstream success as normal inputs.
 - Name the source of truth and the consistency expectation before choosing a topology or model.
@@ -13,6 +14,7 @@ Scope: designing data models, storage, replication, partitioning, streams, or an
 - Latency is a distribution; track percentiles (p50/p99/p999), never just averages.
 
 ### Model data and derived data
+**Sources:** [ddia]
 - Choose data models from relationships, access patterns, consistency needs, update locality, and evolution pressure.
 - Indexes, caches, search copies, read models, materialized views, and denormalized fields are derived data: give each an explicit propagation path, lag bound, observability, and rebuild path.
 - Commands, jobs, events, and stream processors must be safe under retry and replay: dedup keys, idempotent transitions, or explicit recovery contracts.
@@ -24,6 +26,7 @@ Scope: designing data models, storage, replication, partitioning, streams, or an
 - Denormalize only where read patterns justify it; keep the write path the single source of truth.
 
 ### Replicate, partition, transact
+**Sources:** [ddia] [jepsen]
 - Choose replication from write topology, latency, failure tolerance, lag, failover, and conflict handling — not from fashion.
 - Partition by workload-relevant locality; be explicit about hot keys, skew, routing, and rebalancing cost.
 - Match transactions and isolation to named invariants; scope atomicity, commit behavior, recovery, and reconciliation explicitly.
@@ -33,6 +36,7 @@ Scope: designing data models, storage, replication, partitioning, streams, or an
 - Sync replication buys stronger durability, async buys lower latency — make the trade explicit per data class.
 
 ### Harden the runtime (Release It!, distributed)
+**Sources:** [release-it]
 - Assume every dependency can fail slow, partial, or prolonged; fail visibly, limit blast radius, shed load, and preserve core service.
 - Put explicit deadlines on every outbound call; no infinite waits.
 - Retry only when safe: bounded count and total time, backoff with jitter, never on validation errors.
@@ -44,6 +48,7 @@ Scope: designing data models, storage, replication, partitioning, streams, or an
 - Route transient failures to bounded retry paths and fail fast on permanent ones.
 
 ## Applicability Guardrails
+**Sources:** (synthesis)
 - A single ACID store beats five eventually-consistent caches until measurement says otherwise; do not build a distributed fabric by default.
 - Exactly-once is real but conditional: it needs coordinated machinery (transactional state plus idempotent effects, or stream-processor transactions) and costs throughput, latency, and complexity. Default to at-least-once plus idempotency; adopt exactly-once only where duplicates are genuinely unacceptable and the coordination cost is justified.
 - Consensus and linearizability where a single-node answer suffices are self-inflicted cost.
@@ -54,6 +59,7 @@ Scope: designing data models, storage, replication, partitioning, streams, or an
 - Adopt new storage or coordination technology only after measuring a real bottleneck it removes.
 
 ## Common Tensions
+**Sources:** (synthesis)
 - Consistency vs. availability and latency — decide per operation, not globally; document staleness bounds.
 - Normalized truth vs. read performance — derived data with an explicit rebuild path beats hidden denormalization.
 - Strong ordering vs. partition scalability — scope ordering to the key that needs it.
@@ -64,6 +70,7 @@ Scope: designing data models, storage, replication, partitioning, streams, or an
 - Strong durability vs. write latency — configure durability per write class (acks, fsync policy) instead of one global setting.
 
 ## Verification
+**Sources:** (synthesis)
 - For every read and write path, can you state: source of truth, staleness bound, retry semantics, and duplicate handling?
 - Fault drill: kill a replica, pause a dependency, duplicate a message, replay a job — record what happens and fix surprises.
 - Is every processor idempotent, and is every retry bounded and safe under duplicate delivery?
@@ -72,3 +79,12 @@ Scope: designing data models, storage, replication, partitioning, streams, or an
 - Do percentiles (not averages) meet the stated SLO under the described load?
 - After any schema or event change, mixed-version readers and writers keep working or fail loudly.
 - Exercise recovery paths (failover, replay, rebuild) before a real incident for any distributed feature; run full chaos experiments where surprise failure is expensive and the environment allows it — not as a blanket requirement.
+
+## Sources
+
+- [ddia] M. Kleppmann, *Designing Data-Intensive Applications* — https://dataintensive.net/
+- [release-it] M. Nygard, *Release It!*, 2nd ed. (book; no open edition)
+- [jepsen] Jepsen — consistency models map — https://jepsen.io/consistency
+- [postgres-docs] PostgreSQL 16 documentation (transaction isolation, replication) — https://www.postgresql.org/docs/16/index.html (supplementary; not the source of any rule here)
+
+Slug definitions, verification status, and per-section mapping: `references/source-map.md`.

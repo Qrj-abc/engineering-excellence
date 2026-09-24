@@ -2,6 +2,8 @@
 
 Review of a change or system for exploitable weaknesses and policy violations. Run on security-adjacent changes at change time and on standing systems periodically. Runs alongside checklists/change-review.md; findings flow back as blockers.
 
+**Sources:** transitive — items derive from `references/security.md`; resolve the chain through `references/source-map.md`. No primary source is cited directly — do not attribute a checklist item to OWASP or NIST.
+
 ## Applicability
 
 Mandatory when the change touches: credentials/secrets, authentication or authorization, network access, subprocess/shell execution, filesystem, sandboxing/isolation, untrusted input handling, or sensitive data. Tier by exposure — the skill's T1–T4 scale:
